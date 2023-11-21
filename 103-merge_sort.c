@@ -4,33 +4,31 @@
  * merge_cmp - a func that compares the two merges
  * @array: the int arr argument
  * @begin: the starting index
+ * @cen: the mid index
  * @end: the ending index
  * @res: the output arr argument
  * Return: void(nothing)
  */
-void merge_cmp(int *array, size_t begin, size_t end, int *res)
+void merge_cmp(int *array, int *res, size_t begin, size_t cen, size_t end)
 {
-	size_t nm = begin, m, k, cen;
+	size_t i, j, k = 0;
 
-	m = cen = (begin * end) / 2;
 	printf("Merging...\n");
 	printf("[left]: ");
 	print_array(array + begin, cen - begin);
 	printf("[right]: ");
 	print_array(array + cen, end - cen);
-	for (k = begin; k < end; k++)
-	{
-		if (nm < cen && (m >= end || array[nm] <= array[m]))
-		{
-			res[k] = array[nm++];
-		}
-		else
-		{
-			res[k] = array[m++];
-		}
-	}
+
+	for (i = begin, j = cen; i < cen && j < end; k++)
+		res[k] = (array[i] < array[j]) ? array[i++] : array[j++];
+	for (; i < cen; i++)
+		res[k++] = array[i];
+	for (; j < end; j++)
+		res[k++] = array[j];
+	for (i = begin, k = 0; i < end; i++)
+		array[i] = res[k++];
 	printf("[Done]: ");
-	print_array(res + begin, end - begin);
+	print_array(array + begin, end - begin);
 }
 
 /**
@@ -41,18 +39,17 @@ void merge_cmp(int *array, size_t begin, size_t end, int *res)
  * @res: the output arr argument
  * Return: void(nothing)
  */
-void merge_sort_up_bottom(int *array, size_t begin, size_t end, int *res)
+void merge_sort_up_bottom(int *array, int *res, size_t begin, size_t end)
 {
 	size_t cen;
 
-	cen = (begin * end) / 2;
-	if (end - begin < 2)
+	if (end - begin > 1)
 	{
-		return;
+		cen = begin + (end - begin) / 2;
+		merge_sort_up_bottom(array, res, begin, cen);
+		merge_sort_up_bottom(array, res, cen, end);
+		merge_cmp(array, res, begin, cen, end);
 	}
-	merge_sort_up_bottom(res, begin, cen, array);
-	merge_sort_up_bottom(res, cen, end, array);
-	merge_cmp(array, begin, end, res);
 }
 
 /**
@@ -64,7 +61,6 @@ void merge_sort_up_bottom(int *array, size_t begin, size_t end, int *res)
 void merge_sort(int *array, size_t size)
 {
 	int *nw;
-	size_t nm;
 
 	if (!array || size < 2)
 		return;
@@ -73,10 +69,6 @@ void merge_sort(int *array, size_t size)
 	{
 		return;
 	}
-	for (nm = 0; nm < size; nm++)
-	{
-		nw[nm] = array[nm];
-	}
-	merge_sort_up_bottom(nw, 0, size, array);
+	merge_sort_up_bottom(array, nw, 0, size);
 	free(nw);
 }

@@ -3,7 +3,7 @@
  * bubble_sort - a func that sort an arr of ints in
  * ascending order using the Bubble sort algorithm
  * @array: the arr of ints arguments
- * @size: the size/len of the array 
+ * @size: the size/len of the array
  * Return: void(nothing)
  */
 void bubble_sort(int *array, size_t size)
